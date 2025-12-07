@@ -1,0 +1,19 @@
+[__config__]
+oldver = "old_ver.json"
+newver = "new_ver.json"
+
+[BASE]
+source = "container"
+container = "nvidia/cuda"
+include_regex = "\\d+\\.\\d+.\\d+-cudnn-devel-ubuntu\\d+.\\d+"
+
+[UV]
+source = "github"
+github = "astral-sh/uv"
+use_max_tag = true
+
+[SAGE]
+source = "github"
+github = "thu-ml/SageAttention"
+use_max_tag = true
+prefix = "v"
