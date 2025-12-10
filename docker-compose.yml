@@ -1,8 +1,24 @@
 services:
 
-  sageattention-wheel:
-    container_name: sageattention-wheel
-    image: snw35/sageattention-wheel:latest
+  sageattention-wheel-cu130:
+    container_name: sageattention-wheel-cu130
+    image: snw35/sageattention-wheel:cu130-latest
+    volumes:
+      - type: bind
+        source: ./wheelhouse
+        target: /home/ubuntu/wheelhouse
+    restart: no
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  sageattention-wheel-cu128:
+    container_name: sageattention-wheel-cu128
+    image: snw35/sageattention-wheel:cu128-latest
     volumes:
       - type: bind
         source: ./wheelhouse

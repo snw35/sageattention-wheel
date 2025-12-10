@@ -5,7 +5,7 @@ newver = "new_ver.json"
 [BASE]
 source = "container"
 container = "nvidia/cuda"
-include_regex = "\\d+\\.\\d+.\\d+-cudnn-devel-ubuntu\\d+.\\d+"
+include_regex = "12.8.\\d+-cudnn-devel-ubuntu\\d+.\\d+"
 
 [UV]
 source = "github"
