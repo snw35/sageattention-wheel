@@ -17,8 +17,12 @@ on:
         required: false
 
 jobs:
-  call-upstream-workflow:
+  update-images:
+    strategy:
+      matrix:
+        workdir: [cu128, cu130]
     uses: snw35/cicd/.github/workflows/github.yaml@main
     with:
-      IMAGE_TAG: 'SAGE_VERSION'
+      WORKDIR: ${{ matrix.workdir }}
+      IMAGE_TAG: SAGE_VERSION
     secrets: inherit
