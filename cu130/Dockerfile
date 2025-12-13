@@ -49,12 +49,15 @@ ENV SAGE_SHA256=ddddf0ad4387ab3e45f14c6e2ae3b5898a158444fed21633b27586ca29ccdb49
 # Download sageattention
 RUN curl -L -O https://github.com/thu-ml/SageAttention/archive/refs/tags/v${SAGE_VERSION}.tar.gz \
   && echo "${SAGE_SHA256}  ./v${SAGE_VERSION}.tar.gz" | sha256sum -c - \
-  && tar -xzf ./v${SAGE_VERSION}.tar.gz
+  && tar -xzf ./v${SAGE_VERSION}.tar.gz \
+  && rm -f ./v${SAGE_VERSION}.tar.gz
 
 # Install dependencies needed to build a sageattention wheel
 RUN uv venv /home/ubuntu/venv --seed --allow-existing \
   && . /home/ubuntu/venv/bin/activate \
   && uv pip install \
+    auditwheel \
+    patchelf \
     ninja \
     torch torchvision --extra-index-url https://download.pytorch.org/whl/cu130 \
     wheel \
@@ -64,8 +67,6 @@ RUN uv venv /home/ubuntu/venv --seed --allow-existing \
   && uv cache clean
 
 WORKDIR /home/ubuntu/${SAGE_FILENAME}
-
-VOLUME /home/ubuntu/wheelhouse
 
 ENTRYPOINT ["entrypoint.sh"]
 
