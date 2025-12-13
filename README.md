@@ -9,24 +9,22 @@ Python wheel builder for the [Sageattention](https://github.com/thu-ml/SageAtten
 
  There are two kinds of wheels built for each platform:
 
-  * Basic (with filename `*-linux_x86_64.whl`) - no libraries bundled, requires installing all external deps (pytorch, CUDA, etc), small filesize.
-  * PEP 600 compliant (with filename `*-manylinux_2_34_x86_64.whl`) - full libraries included, large filesize.
+  * Basic wheel (with filename `*-linux_x86_64.whl`) - no libraries bundled, requires installing all external deps (pytorch, CUDA, etc), small filesize.
+  * [PEP-600](https://peps.python.org/pep-0600/) compliant wheel (with filename `*-manylinux_2_34_x86_64.whl`) - full libraries included, large filesize.
 
-Chose the one appropriate for your needs. Note that the 'PEP 600' wheel is **several gigabytes in size**.
+Built wheels can be downloaded from the releases page. Select the one appropriate for your needs, Python version, and CUDA version. Note that the 'PEP 600' wheel is **several gigabytes in size**.
 
- Built wheels can be downloaded from the releases page. Select the one appropriate for your CUDA version.
+To install the basic wheel, you will need to ensure Sageattention's dependencies are installed, for example Pytorch and Torchvision for CUDA 13, in an environment (OS or container) where the CUDA runtime is installed:
 
- You will need to ensure Sageattention's dependencies are installed, for example Pytorch and Torchvision for CUDA 13:
+```
+pip install torch torchvision --extra-index-url https://download.pytorch.org/whl/cu130
+```
 
- ```
- pip install torch torchvision --extra-index-url https://download.pytorch.org/whl/cu130
- ```
+Then simply download the wheel from the releases page and install it using pip:
 
- Then simply download the wheel from the releases page and install it using pip:
-
- ```
- pip install <filename>
- ```
+```
+pip install <filename>
+```
 
 ## Why?
 
