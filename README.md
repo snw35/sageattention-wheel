@@ -2,10 +2,17 @@
 
 Python wheel builder for the [Sageattention](https://github.com/thu-ml/SageAttention) package. Currently builds wheels for:
 
- * Linux x86_64, cp312 (Python 3.12), CUDA 13.0
- * linux_x86_64, cp311 (Python 3.11), CUDA 12.8
+ * Linux x86_64, GlibC 2.34, cp312 (Python 3.12), CUDA 13.0
+ * linux_x86_64, GlibC 2.34, cp311 (Python 3.11), CUDA 12.8
 
  ## How to Install Built Wheels
+
+ There are two kinds of wheels built for each platform:
+
+  * Basic (with filename `*-linux_x86_64.whl`) - no libraries bundled, requires installing all external deps (pytorch, CUDA, etc), small filesize.
+  * PEP 600 compliant (with filename `*-manylinux_2_34_x86_64.whl`) - full libraries included, large filesize.
+
+Chose the one appropriate for your needs. Note that the 'PEP 600' wheel is **several gigabytes in size**.
 
  Built wheels can be downloaded from the releases page. Select the one appropriate for your CUDA version.
 
