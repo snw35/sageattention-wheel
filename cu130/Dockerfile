@@ -68,8 +68,6 @@ RUN uv venv /home/ubuntu/venv --seed --allow-existing \
 
 WORKDIR /home/ubuntu/${SAGE_FILENAME}
 
-VOLUME /home/ubuntu/wheelhouse
-
 ENTRYPOINT ["entrypoint.sh"]
 
 CMD ["build.sh"]
