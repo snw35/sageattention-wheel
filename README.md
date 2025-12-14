@@ -1,5 +1,8 @@
 # sageattention-wheel
 
+* ![Build Status](https://github.com/snw35/sageattention-wheel/actions/workflows/update.yml/badge.svg)
+* [Dockerhub: snw35/sageattention-wheel](https://hub.docker.com/r/snw35/sageattention-wheel)
+
 Python wheel builder for the [Sageattention](https://github.com/thu-ml/SageAttention) package. Currently builds wheels for:
 
  * Linux x86_64, GlibC 2.34, cp312 (Python 3.12), CUDA 13.0
