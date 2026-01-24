@@ -2,7 +2,7 @@ services:
 
   sageattention-wheel-cu130:
     container_name: sageattention-wheel-cu130
-    image: snw35/sageattention-wheel:cu130-latest
+    image: snw35/sageattention-wheel:cu130
     volumes:
       - type: bind
         source: ./wheelhouse
@@ -18,7 +18,7 @@ services:
 
   sageattention-wheel-cu128:
     container_name: sageattention-wheel-cu128
-    image: snw35/sageattention-wheel:cu128-latest
+    image: snw35/sageattention-wheel:cu128
     volumes:
       - type: bind
         source: ./wheelhouse
