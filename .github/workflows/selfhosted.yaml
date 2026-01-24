@@ -1,0 +1,115 @@
+name: Self-hosted wheelhouse
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-wheelhouse:
+    runs-on: [self-hosted, gpu]
+    timeout-minutes: 180
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify GPU availability
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v nvidia-smi >/dev/null 2>&1; then
+            echo "nvidia-smi not found; GPU drivers may be missing."
+            exit 1
+          fi
+          if ! nvidia-smi -L >/dev/null 2>&1; then
+            echo "No NVIDIA GPUs detected by nvidia-smi."
+            exit 1
+          fi
+          min_cuda="13.0"
+          cuda_version="$(nvidia-smi | awk -F 'CUDA Version: ' 'NF>1 {print $2}' | awk '{print $1}' | head -n1)"
+          if [ -z "${cuda_version}" ]; then
+            echo "Unable to determine CUDA version from nvidia-smi output."
+            exit 1
+          fi
+          if [ "$(printf '%s\n' "${min_cuda}" "${cuda_version}" | sort -V | head -n1)" != "${min_cuda}" ]; then
+            echo "CUDA ${cuda_version} detected; requires ${min_cuda} or newer."
+            exit 1
+          fi
+
+      - name: Prepare wheelhouse directory
+        run: |
+          rm -rf wheelhouse
+          mkdir -p wheelhouse
+
+      - name: Run docker compose
+        shell: bash
+        run: |
+          set -euo pipefail
+          if docker compose version >/dev/null 2>&1; then
+            compose() { docker compose "$@"; }
+          elif command -v docker-compose >/dev/null 2>&1; then
+            compose() { docker-compose "$@"; }
+          else
+            echo "Neither 'docker compose' nor 'docker-compose' is available."
+            exit 1
+          fi
+          trap 'compose down --remove-orphans' EXIT
+          compose up --pull always --remove-orphans
+
+      - name: Upload wheelhouse to latest release
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require("fs");
+            const path = require("path");
+
+            const { owner, repo } = context.repo;
+            const { data: release } = await github.rest.repos.getLatestRelease({ owner, repo });
+            const release_id = release.id;
+
+            const wheelhouse = path.join(process.env.GITHUB_WORKSPACE, "wheelhouse");
+            if (!fs.existsSync(wheelhouse)) {
+              core.setFailed(`wheelhouse directory not found at ${wheelhouse}`);
+              return;
+            }
+
+            const files = fs.readdirSync(wheelhouse).filter((name) =>
+              fs.statSync(path.join(wheelhouse, name)).isFile()
+            );
+            if (files.length === 0) {
+              core.setFailed("wheelhouse directory is empty; nothing to upload.");
+              return;
+            }
+
+            const assets = await github.paginate(github.rest.repos.listReleaseAssets, {
+              owner,
+              repo,
+              release_id,
+              per_page: 100,
+            });
+            const existing = new Map(assets.map((asset) => [asset.name, asset.id]));
+
+            for (const name of files) {
+              const filePath = path.join(wheelhouse, name);
+              if (existing.has(name)) {
+                await github.rest.repos.deleteReleaseAsset({
+                  owner,
+                  repo,
+                  asset_id: existing.get(name),
+                });
+              }
+
+              const data = fs.readFileSync(filePath);
+              await github.rest.repos.uploadReleaseAsset({
+                owner,
+                repo,
+                release_id,
+                name,
+                data,
+                headers: {
+                  "content-type": "application/octet-stream",
+                  "content-length": data.length,
+                },
+              });
+            }

@@ -55,6 +55,18 @@ docker compose up -d && docker compose logs -f
 
 The containers will start and, assuming GPU pass-through is working, immediately begin building the wheels. Watch the log output and when finished look in `./wheelhouse` for your pre-compiled wheels of sageattention.
 
+## Self-hosted Runner Requirements
+
+The `Self-hosted wheelhouse` GitHub Actions workflow runs on a self-hosted runner and uses Docker Compose to build wheels, then uploads the resulting files in `./wheelhouse` to the latest GitHub release. The runner must meet these requirements:
+
+ * Labeled `self-hosted` and `gpu` in GitHub Actions.
+ * NVIDIA GPU supported by Sageattention (RTX 20 series or newer).
+ * CUDA 13.0 or newer installed on the host and visible to `nvidia-smi`.
+ * `nvidia-smi` available on PATH.
+ * Docker installed with NVIDIA container toolkit (or equivalent GPU passthrough).
+ * Docker Compose available (`docker compose` or `docker-compose`).
+ * Network access to pull container images and upload release assets.
+
 ## Releases
 
 Because free Github Actions runners do not have access to a GPU, I will build and release wheels compiled on my own hardware for now.
