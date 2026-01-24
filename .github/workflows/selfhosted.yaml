@@ -2,6 +2,17 @@ name: Self-hosted wheelhouse
 
 on:
   workflow_dispatch:
+    inputs:
+      publish_release:
+        description: "Upload wheelhouse to the latest release (default: false for branch testing)"
+        type: boolean
+        required: false
+        default: false
+      upload_artifact:
+        description: "Upload wheelhouse as a workflow artifact (default: true)"
+        type: boolean
+        required: false
+        default: true
 
 permissions:
   contents: write
@@ -57,7 +68,16 @@ jobs:
           trap 'compose down --remove-orphans' EXIT
           compose up --pull always --remove-orphans
 
+      - name: Upload wheelhouse artifact
+        if: ${{ inputs.upload_artifact }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheelhouse
+          path: wheelhouse
+          if-no-files-found: error
+
       - name: Upload wheelhouse to latest release
+        if: ${{ inputs.publish_release && github.ref_name == github.event.repository.default_branch }}
         uses: actions/github-script@v7
         with:
           script: |
