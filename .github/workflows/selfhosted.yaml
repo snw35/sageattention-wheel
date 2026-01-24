@@ -70,7 +70,13 @@ jobs:
             exit 1
           fi
           trap 'compose down --remove-orphans' EXIT
-          compose up --pull always --remove-orphans
+          run_service() {
+            local service="$1"
+            compose up --pull always --remove-orphans --abort-on-container-exit --exit-code-from "${service}" "${service}"
+            compose down --remove-orphans
+          }
+          run_service sageattention-wheel-cu128
+          run_service sageattention-wheel-cu130
 
       - name: Upload wheelhouse artifact
         if: ${{ inputs.upload_artifact }}
