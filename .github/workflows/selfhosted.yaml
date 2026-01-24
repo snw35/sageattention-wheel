@@ -1,6 +1,9 @@
 name: Self-hosted wheelhouse
 
 on:
+  push:
+    branches:
+      - selfhosted-workflow
   workflow_dispatch:
     inputs:
       publish_release:
