@@ -1,16 +1,13 @@
 name: Self-hosted wheelhouse
 
 on:
-  push:
-    branches:
-      - selfhosted-workflow
   workflow_dispatch:
     inputs:
       publish_release:
-        description: "Upload wheelhouse to the latest release (default: false for branch testing)"
+        description: "Upload wheelhouse to the latest release (default: true)"
         type: boolean
         required: false
-        default: false
+        default: true
       upload_artifact:
         description: "Upload wheelhouse as a workflow artifact (default: true)"
         type: boolean
