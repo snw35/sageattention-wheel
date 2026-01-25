@@ -75,13 +75,40 @@ jobs:
           run_service sageattention-wheel-cu128
           run_service sageattention-wheel-cu130
 
+      - name: Filter wheelhouse files under 2 GiB
+        shell: bash
+        run: |
+          set -euo pipefail
+          max_bytes=$((2 * 1024 * 1024 * 1024))
+          filtered="wheelhouse_upload"
+          rm -rf "${filtered}"
+          mkdir -p "${filtered}"
+          skipped=0
+          copied=0
+          while IFS= read -r -d '' file; do
+            size="$(stat -c %s "${file}")"
+            if [ "${size}" -ge "${max_bytes}" ]; then
+              echo "Skipping ${file} (${size} bytes) >= 2 GiB."
+              skipped=$((skipped + 1))
+              continue
+            fi
+            cp -v "${file}" "${filtered}/"
+            copied=$((copied + 1))
+          done < <(find wheelhouse -maxdepth 1 -type f -print0)
+          if [ "${copied}" -eq 0 ]; then
+            echo "Warning: no wheelhouse files under 2 GiB to upload."
+            if [ "${skipped}" -gt 0 ]; then
+              echo "All ${skipped} wheelhouse files were skipped for being >= 2 GiB."
+            fi
+          fi
+
       - name: Upload wheelhouse artifact
         if: ${{ inputs.upload_artifact }}
         uses: actions/upload-artifact@v4
         with:
           name: wheelhouse
-          path: wheelhouse
-          if-no-files-found: error
+          path: wheelhouse_upload
+          if-no-files-found: warn
 
       - name: Upload wheelhouse to latest release
         if: ${{ inputs.publish_release && github.ref_name == github.event.repository.default_branch }}
@@ -90,12 +117,13 @@ jobs:
           script: |
             const fs = require("fs");
             const path = require("path");
+            const MAX_BYTES = 2 * 1024 * 1024 * 1024;
 
             const { owner, repo } = context.repo;
             const { data: release } = await github.rest.repos.getLatestRelease({ owner, repo });
             const release_id = release.id;
 
-            const wheelhouse = path.join(process.env.GITHUB_WORKSPACE, "wheelhouse");
+            const wheelhouse = path.join(process.env.GITHUB_WORKSPACE, "wheelhouse_upload");
             if (!fs.existsSync(wheelhouse)) {
               core.setFailed(`wheelhouse directory not found at ${wheelhouse}`);
               return;
@@ -105,7 +133,7 @@ jobs:
               fs.statSync(path.join(wheelhouse, name)).isFile()
             );
             if (files.length === 0) {
-              core.setFailed("wheelhouse directory is empty; nothing to upload.");
+              core.warning("wheelhouse directory is empty; nothing to upload.");
               return;
             }
 
@@ -119,6 +147,11 @@ jobs:
 
             for (const name of files) {
               const filePath = path.join(wheelhouse, name);
+              const size = fs.statSync(filePath).size;
+              if (size >= MAX_BYTES) {
+                core.info(`Skipping ${name}: ${size} bytes >= 2 GiB.`);
+                continue;
+              }
               if (existing.has(name)) {
                 await github.rest.repos.deleteReleaseAsset({
                   owner,
