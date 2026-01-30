@@ -21,7 +21,7 @@ pip wheel -w /home/ubuntu/wheelhouse --no-deps --no-build-isolation .
 export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:-}:/home/ubuntu/venv/lib/python3.11/site-packages/torch/lib"
 
 shopt -s nullglob
-wheel_candidates=(/home/ubuntu/wheelhouse/sageattention-*-linux_x86_64.whl)
+wheel_candidates=(/home/ubuntu/wheelhouse/sageattention-*+${SAGE_CUDA_SUFFIX}-*linux_x86_64.whl)
 if [ ${#wheel_candidates[@]} -eq 0 ]; then
   echo "No linux_x86_64 wheel found in /home/ubuntu/wheelhouse"
   exit 1
