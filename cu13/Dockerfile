@@ -1,4 +1,4 @@
-FROM nvidia/cuda:13.0.2-cudnn-devel-ubuntu24.04
+FROM nvidia/cuda:13.1.1-cudnn-devel-ubuntu24.04
 
 # The nvcc compiler and full CUDA libs are needed to compile sageattention
 
@@ -21,7 +21,7 @@ ENV WHEEL_PATH=/home/ubuntu/wheelhouse
 ENV UV_CACHE_DIR=/home/ubuntu/venv/uvcache
 
 # Version of python to install with uv
-ENV UV_PYTHON=3.12
+ENV UV_PYTHON=3.11
 
 # Version variables controlled by https://github.com/snw35/dfupdate
 ENV UV_VERSION=0.9.26
