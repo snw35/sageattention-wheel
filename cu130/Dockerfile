@@ -5,7 +5,8 @@ FROM nvidia/cuda:13.0.2-cudnn-devel-ubuntu24.04
 # Install curl to fetch remote files
 RUN apt-get update \
   && apt-get install -y \
-    curl
+    curl \
+    git
 
 # Copy and set permissions on scripts
 COPY entrypoint.sh /home/ubuntu/entrypoint.sh
@@ -46,11 +47,12 @@ ENV SAGE_URL=https://github.com/thu-ml/SageAttention/archive/refs/tags
 ENV SAGE_FILENAME=SageAttention-${SAGE_VERSION}
 ENV SAGE_SHA256=ddddf0ad4387ab3e45f14c6e2ae3b5898a158444fed21633b27586ca29ccdb49
 
-# Download sageattention
+# Download sageattention 2 (versioned) and SageAttention 1 (branch)
 RUN curl -L -O https://github.com/thu-ml/SageAttention/archive/refs/tags/v${SAGE_VERSION}.tar.gz \
   && echo "${SAGE_SHA256}  ./v${SAGE_VERSION}.tar.gz" | sha256sum -c - \
   && tar -xzf ./v${SAGE_VERSION}.tar.gz \
-  && rm -f ./v${SAGE_VERSION}.tar.gz
+  && rm -f ./v${SAGE_VERSION}.tar.gz \
+  && git clone --depth 1 --branch sageattention-1 https://github.com/thu-ml/SageAttention.git sageattention-1
 
 # Install dependencies needed to build a sageattention wheel
 RUN uv venv /home/ubuntu/venv --seed --allow-existing \
