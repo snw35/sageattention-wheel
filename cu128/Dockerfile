@@ -5,7 +5,8 @@ FROM nvidia/cuda:12.8.1-cudnn-devel-ubuntu24.04
 # Install curl to fetch remote files
 RUN apt-get update \
   && apt-get install -y \
-    curl
+    curl \
+    git
 
 # Copy and set permissions on scripts
 COPY entrypoint.sh /home/ubuntu/entrypoint.sh
