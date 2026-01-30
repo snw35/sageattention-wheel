@@ -5,8 +5,10 @@
 
 Python wheel builder for the [Sageattention](https://github.com/thu-ml/SageAttention) package. Currently builds wheels for:
 
- * Linux x86_64, GlibC 2.34, cp312 (Python 3.12), CUDA 13.0
- * linux_x86_64, GlibC 2.34, cp311 (Python 3.11), CUDA 12.8
+ * Linux x86_64, GlibC 2.34, cp311 (Python 3.11), CUDA 13
+ * Linux_x86_64, GlibC 2.34, cp311 (Python 3.11), CUDA 12
+
+Python 3.11 is chosen as it is used by e.g [Reforge Neo](https://github.com/snw35/reforge).
 
  ## How to Install Built Wheels
 
@@ -61,7 +63,7 @@ The `Self-hosted wheelhouse` GitHub Actions workflow runs on a self-hosted runne
 
  * Labeled `self-hosted` and `gpu` in GitHub Actions.
  * NVIDIA GPU supported by Sageattention (RTX 20 series or newer).
- * CUDA 13.0 or newer installed on the host and visible to `nvidia-smi`.
+ * CUDA 13 or newer installed on the host and visible to `nvidia-smi`.
  * `nvidia-smi` available on PATH.
  * Docker installed with NVIDIA container toolkit (or equivalent GPU passthrough).
  * Docker Compose available (`docker compose` or `docker-compose`).
