@@ -4,11 +4,13 @@
 
 if [ -f /home/ubuntu/venv/bin/activate ]; then
 
-  cd /home/ubuntu/${SAGE_FILENAME}
   source /home/ubuntu/venv/bin/activate
-  pip wheel -w /home/ubuntu/wheelhouse --no-deps --no-build-isolation .
+  pip wheel -w /home/ubuntu/wheelhouse --no-deps --no-build-isolation /home/ubuntu/sageattention-1
+  pip wheel -w /home/ubuntu/wheelhouse --no-deps --no-build-isolation /home/ubuntu/${SAGE_FILENAME}
+  pip wheel -w /home/ubuntu/wheelhouse --no-deps --no-build-isolation /home/ubuntu/${SAGE_FILENAME}/sageattention3_blackwell
   export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/home/ubuntu/venv/lib/python3.11/site-packages/torch/lib"
-  auditwheel show /home/ubuntu/wheelhouse/sageattention-2.2.0-cp311-cp311-linux_x86_64.whl
-  auditwheel repair -w /home/ubuntu/wheelhouse /home/ubuntu/wheelhouse/sageattention-2.2.0-cp311-cp311-linux_x86_64.whl
+  auditwheel show /home/ubuntu/wheelhouse/*
+  auditwheel repair -w /home/ubuntu/wheelhouse /home/ubuntu/wheelhouse/* --strip
+  auditwheel show /home/ubuntu/wheelhouse/*
 
 fi
