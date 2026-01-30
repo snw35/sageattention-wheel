@@ -37,7 +37,7 @@ jobs:
             echo "No NVIDIA GPUs detected by nvidia-smi."
             exit 1
           fi
-          min_cuda="13.0"
+          min_cuda="13.1"
           cuda_version="$(nvidia-smi | awk -F 'CUDA Version: ' 'NF>1 {print $2}' | awk '{print $1}' | head -n1)"
           if [ -z "${cuda_version}" ]; then
             echo "Unable to determine CUDA version from nvidia-smi output."
@@ -72,8 +72,8 @@ jobs:
             compose up --pull always --remove-orphans --abort-on-container-exit --exit-code-from "${service}" "${service}"
             compose down --remove-orphans
           }
-          run_service sageattention-wheel-cu128
-          run_service sageattention-wheel-cu130
+          run_service sageattention-wheel-cu12
+          run_service sageattention-wheel-cu13
 
       - name: Filter wheelhouse files under 2 GiB
         shell: bash

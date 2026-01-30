@@ -20,7 +20,7 @@ jobs:
   update-images:
     strategy:
       matrix:
-        workdir: [cu128, cu130]
+        workdir: [cu12, cu13]
     uses: snw35/cicd/.github/workflows/github.yaml@main
     with:
       WORKDIR: ${{ matrix.workdir }}

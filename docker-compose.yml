@@ -1,8 +1,8 @@
 services:
 
-  sageattention-wheel-cu130:
-    container_name: sageattention-wheel-cu130
-    image: snw35/sageattention-wheel:cu130
+  sageattention-wheel-cu13:
+    container_name: sageattention-wheel-cu13
+    image: snw35/sageattention-wheel:cu13
     volumes:
       - type: bind
         source: ./wheelhouse
@@ -16,9 +16,9 @@ services:
               count: all
               capabilities: [gpu]
 
-  sageattention-wheel-cu128:
-    container_name: sageattention-wheel-cu128
-    image: snw35/sageattention-wheel:cu128
+  sageattention-wheel-cu12:
+    container_name: sageattention-wheel-cu12
+    image: snw35/sageattention-wheel:cu12
     volumes:
       - type: bind
         source: ./wheelhouse
