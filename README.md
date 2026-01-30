@@ -17,7 +17,7 @@ Python 3.11 is chosen as it is used by e.g [Reforge Neo](https://github.com/snw3
   * Basic wheel (with filename `*-linux_x86_64.whl`) - no libraries bundled, requires installing all external deps (pytorch, CUDA, etc), small filesize.
   * [PEP-600](https://peps.python.org/pep-0600/) compliant wheel (with filename `*-manylinux_2_34_x86_64.whl`) - full libraries included, large filesize.
 
-Built wheels can be downloaded from the releases page. Select the one appropriate for your needs, Python version, and CUDA version. Note that the 'PEP 600' wheel is **several gigabytes in size**.
+Built wheels can be downloaded from the releases page. Select the one appropriate for your needs, Python version, and CUDA version. CUDA variants are encoded using a PEP 440 local version segment, so filenames include `+cu12` or `+cu13` (e.g. `sageattention-2.2.0+cu13-...whl`). Note that the 'PEP 600' wheel is **several gigabytes in size**.
 
 To install the basic wheel, you will need to ensure Sageattention's dependencies are installed, for example Pytorch and Torchvision for CUDA 13, in an environment (OS or container) where the CUDA runtime is installed:
 

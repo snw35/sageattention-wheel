@@ -10,6 +10,7 @@ RUN apt-get update \
 # Copy and set permissions on scripts
 COPY entrypoint.sh /home/ubuntu/entrypoint.sh
 COPY build.sh /home/ubuntu/build.sh
+COPY patch_version.py /home/ubuntu/patch_version.py
 RUN mkdir /home/ubuntu/wheelhouse \
   && chown -R ubuntu:ubuntu /home/ubuntu \
   && chmod +x /home/ubuntu/*.sh
@@ -42,6 +43,7 @@ ENV PATH="$PATH:/home/ubuntu:/home/ubuntu/.local/bin/"
 
 # Version variables controlled by https://github.com/snw35/dfupdate
 ENV SAGE_VERSION=2.2.0
+ENV SAGE_CUDA_SUFFIX=cu13
 ENV SAGE_URL=https://github.com/thu-ml/SageAttention/archive/refs/tags
 ENV SAGE_FILENAME=SageAttention-${SAGE_VERSION}
 ENV SAGE_SHA256=ddddf0ad4387ab3e45f14c6e2ae3b5898a158444fed21633b27586ca29ccdb49
