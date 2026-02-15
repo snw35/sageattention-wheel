@@ -25,10 +25,10 @@ ENV UV_CACHE_DIR=/home/ubuntu/venv/uvcache
 ENV UV_PYTHON=3.11
 
 # Version variables controlled by https://github.com/snw35/dfupdate
-ENV UV_VERSION=0.10.0
+ENV UV_VERSION=0.10.2
 ENV UV_URL=https://github.com/astral-sh/uv/releases/download/${UV_VERSION}
 ENV UV_FILENAME=uv-x86_64-unknown-linux-gnu.tar.gz
-ENV UV_SHA256=230e328948c92dd1ebad83949c4d56e83813dfe9c6362a4c519e6a227973f1ae
+ENV UV_SHA256=6aa4576c31f791c0b9d4739e256d07358d45e7535695287fec03cf6839e25512
 
 # Install UV
 RUN curl -L -O ${UV_URL}/${UV_FILENAME} \
