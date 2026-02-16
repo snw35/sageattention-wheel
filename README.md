@@ -5,10 +5,10 @@
 
 Python wheel builder for the [Sageattention](https://github.com/thu-ml/SageAttention) package. Currently builds wheels for:
 
- * Linux x86_64, GlibC 2.34, cp311 (Python 3.11), CUDA 13
+ * Linux x86_64, GlibC 2.34, cp313 (Python 3.13), CUDA 13
  * Linux_x86_64, GlibC 2.34, cp311 (Python 3.11), CUDA 12
 
-Python 3.11 is chosen as it is used by e.g [Reforge Neo](https://github.com/snw35/reforge).
+Python 3.11 and 3.13 are used by e.g [Reforge Neo](https://github.com/snw35/reforge).
 
  ## How to Install Built Wheels
 
