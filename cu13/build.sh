@@ -18,7 +18,7 @@ fi
 
 pip wheel -w /home/ubuntu/wheelhouse --no-deps --no-build-isolation .
 
-export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:-}:/home/ubuntu/venv/lib/python3.11/site-packages/torch/lib"
+export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:-}:/home/ubuntu/venv/lib/python${UV_PYTHON}/site-packages/torch/lib"
 
 shopt -s nullglob
 wheel_candidates=(/home/ubuntu/wheelhouse/sageattention-*+${SAGE_CUDA_SUFFIX}-*linux_x86_64.whl)
