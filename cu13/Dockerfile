@@ -22,7 +22,7 @@ ENV WHEEL_PATH=/home/ubuntu/wheelhouse
 ENV UV_CACHE_DIR=/home/ubuntu/venv/uvcache
 
 # Version of python to install with uv
-ENV UV_PYTHON=3.11
+ENV UV_PYTHON=3.13
 
 # Version variables controlled by https://github.com/snw35/dfupdate
 ENV UV_VERSION=0.10.2
