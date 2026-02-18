@@ -17,6 +17,18 @@ declare -a failed_versions=()
 mkdir -p "${WHEEL_DIR}" "${VENV_ROOT}"
 cd "${SAGE_DIR}"
 
+cleanup_raw_dirs() {
+  shopt -s nullglob
+  local raw_dirs=("${WHEEL_DIR}"/raw-py*)
+  shopt -u nullglob
+  if [ ${#raw_dirs[@]} -gt 0 ]; then
+    rm -rf "${raw_dirs[@]}"
+  fi
+}
+
+trap cleanup_raw_dirs EXIT
+cleanup_raw_dirs
+
 discover_versions() {
   local versions=()
 
@@ -63,6 +75,7 @@ build_for_python() {
     local py_nodot="${py_minor/./}"
     local venv_dir="${VENV_ROOT}/venv-${py_minor}"
     local raw_out_dir="${WHEEL_DIR}/raw-py${py_nodot}"
+    trap 'rm -rf "${raw_out_dir}"' EXIT
 
     echo "=== Building SageAttention wheel for Python ${py_minor} ==="
 
