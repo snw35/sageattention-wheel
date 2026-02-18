@@ -5,19 +5,24 @@
 
 Python wheel builder for the [Sageattention](https://github.com/thu-ml/SageAttention) package. Currently builds wheels for:
 
- * Linux x86_64, GlibC 2.34, cp313 (Python 3.13), CUDA 13
- * Linux_x86_64, GlibC 2.34, cp311 (Python 3.11), CUDA 12
+ * Linux x86_64, GlibC 2.34, CUDA 12 and 13.
 
-Python 3.11 and 3.13 are used by e.g [Reforge Neo](https://github.com/snw35/reforge).
+Every version of python supported by the latest uv is attempted for both CUDA versions. Whether a wheel builds on each version is determined by its pytorch support.
 
- ## How to Install Built Wheels
+## How to Install Built Wheels
 
- There are two kinds of wheels built for each platform:
+Built wheels can be downloaded from the latest release on the releases page.
 
-  * Basic wheel (with filename `*-linux_x86_64.whl`) - no libraries bundled, requires installing all external deps (pytorch, CUDA, etc), small filesize.
-  * [PEP-600](https://peps.python.org/pep-0600/) compliant wheel (with filename `*-manylinux_2_34_x86_64.whl`) - full libraries included, large filesize.
+Wheels are constructed by the [self-hosted wheelhouse](https://github.com/snw35/sageattention-wheel/actions/workflows/selfhosted.yaml) Github Actions workflow, which runs on my own hardware, with access to an Nvidia 40-series GPU.
 
-Built wheels can be downloaded from the releases page. Select the one appropriate for your needs, Python version, and CUDA version. CUDA variants are encoded using a PEP 440 local version segment, so filenames include `+cu12` or `+cu13` (e.g. `sageattention-2.2.0+cu13-...whl`). Note that the 'PEP 600' wheel is **several gigabytes in size**.
+There are two kinds of wheels built for each platform:
+
+ * Basic wheel (with filename `*-linux_x86_64.whl`) - no libraries bundled, requires installing all external deps (pytorch, CUDA, etc), small filesize.
+ * [PEP-600](https://peps.python.org/pep-0600/) compliant wheel (with filename `*-manylinux_2_34_x86_64.whl`) - full libraries included, large filesize.
+
+**NOTE:** CUDA 12 PEP-600 wheels are too large for Github's artefact storage (max 2GB) so are currently omitted.
+
+Select the one appropriate for your needs, Python version, and CUDA version. CUDA variants are encoded using a PEP 440 local version segment, so filenames include `+cu12` or `+cu13` (e.g. `sageattention-2.2.0+cu13-...whl`). Note that the 'PEP 600' wheel is **over a gigabyte in size**.
 
 To install the basic wheel, you will need to ensure Sageattention's dependencies are installed, for example Pytorch and Torchvision for CUDA 13, in an environment (OS or container) where the CUDA runtime is installed:
 
