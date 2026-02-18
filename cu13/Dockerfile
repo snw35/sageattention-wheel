@@ -27,10 +27,10 @@ ENV UV_PYTHON_VERSIONS=
 ENV TORCH_INDEX_URL=https://download.pytorch.org/whl/cu130
 
 # Version variables controlled by https://github.com/snw35/dfupdate
-ENV UV_VERSION=0.10.3
+ENV UV_VERSION=0.10.4
 ENV UV_URL=https://github.com/astral-sh/uv/releases/download/${UV_VERSION}
 ENV UV_FILENAME=uv-x86_64-unknown-linux-gnu.tar.gz
-ENV UV_SHA256=c60b9956a0e6727f0ddd881c303a706c6408b2047f3a8fa4d1454a826338ccdc
+ENV UV_SHA256=6b52a47358deea1c5e173278bf46b2b489747a59ae31f2a4362ed5c6c1c269f7
 
 # Install UV
 RUN curl -L -O ${UV_URL}/${UV_FILENAME} \
