@@ -19,10 +19,12 @@ RUN mkdir /home/ubuntu/wheelhouse \
 USER ubuntu
 WORKDIR /home/ubuntu
 ENV WHEEL_PATH=/home/ubuntu/wheelhouse
-ENV UV_CACHE_DIR=/home/ubuntu/venv/uvcache
+ENV UV_CACHE_DIR=/home/ubuntu/.cache/uv
 
-# Version of python to install with uv
-ENV UV_PYTHON=3.11
+# Optional comma-separated override, e.g. "3.11,3.12,3.13".
+# If unset/empty, build.sh auto-discovers installable CPython versions with uv.
+ENV UV_PYTHON_VERSIONS=
+ENV TORCH_INDEX_URL=https://download.pytorch.org/whl/cu128
 
 # Version variables controlled by https://github.com/snw35/dfupdate
 ENV UV_VERSION=0.10.3
@@ -54,19 +56,8 @@ RUN curl -L -O https://github.com/thu-ml/SageAttention/archive/refs/tags/v${SAGE
   && tar -xzf ./v${SAGE_VERSION}.tar.gz \
   && rm -f ./v${SAGE_VERSION}.tar.gz
 
-# Install dependencies needed to build a sageattention wheel
-RUN uv venv /home/ubuntu/venv --seed --allow-existing \
-  && . /home/ubuntu/venv/bin/activate \
-  && uv pip install \
-    auditwheel \
-    patchelf \
-    ninja \
-    torch torchvision --extra-index-url https://download.pytorch.org/whl/cu128 \
-    wheel \
-    setuptools \
-    packaging \
-  && pip cache purge \
-  && uv cache clean
+# Prepare directories used by matrix builds at runtime
+RUN mkdir -p "${WHEEL_PATH}" "${UV_CACHE_DIR}" /home/ubuntu/venvs
 
 WORKDIR /home/ubuntu/${SAGE_FILENAME}
 
