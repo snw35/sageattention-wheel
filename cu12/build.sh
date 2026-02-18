@@ -108,7 +108,7 @@ build_for_python() {
     python -m pip wheel -w "${raw_out_dir}" --no-deps --no-build-isolation .
 
     shopt -s nullglob
-    local wheel_candidates=("${raw_out_dir}"/sageattention-*+${SAGE_CUDA_SUFFIX}-*linux_x86_64.whl)
+    local wheel_candidates=("${raw_out_dir}"/sageattention-*+"${SAGE_CUDA_SUFFIX}"-*linux_x86_64.whl)
     shopt -u nullglob
     if [ ${#wheel_candidates[@]} -eq 0 ]; then
       echo "No linux_x86_64 wheel found in ${raw_out_dir}"
