@@ -1,8 +1,6 @@
 name: Self-hosted wheelhouse
 
 on:
-  push:
-    branches: [ "master", "main", "mainline" ]
   workflow_dispatch:
     inputs:
       skip_publish_release:
