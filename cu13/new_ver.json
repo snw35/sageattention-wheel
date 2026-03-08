@@ -11,10 +11,10 @@
       "url": "https://github.com/thu-ml/SageAttention/releases/tag/v2.2.0"
     },
     "UV": {
-      "version": "0.10.7",
-      "gitref": "refs/tags/0.10.7",
-      "revision": "08ab1a344774ac4e9ff44e8b06134e8bcf01ae0e",
-      "url": "https://github.com/astral-sh/uv/releases/tag/0.10.7"
+      "version": "0.10.9",
+      "gitref": "refs/tags/0.10.9",
+      "revision": "f675560f322a6ee6490643a2fce3cb520966c402",
+      "url": "https://github.com/astral-sh/uv/releases/tag/0.10.9"
     }
   }
 }
