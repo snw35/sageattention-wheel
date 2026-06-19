@@ -25,29 +25,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Verify GPU availability
-        shell: bash
-        run: |
-          set -euo pipefail
-          if ! command -v nvidia-smi >/dev/null 2>&1; then
-            echo "nvidia-smi not found; GPU drivers may be missing."
-            exit 1
-          fi
-          if ! nvidia-smi -L >/dev/null 2>&1; then
-            echo "No NVIDIA GPUs detected by nvidia-smi."
-            exit 1
-          fi
-          min_cuda="13.1"
-          cuda_version="$(nvidia-smi | awk -F 'CUDA Version: ' 'NF>1 {print $2}' | awk '{print $1}' | head -n1)"
-          if [ -z "${cuda_version}" ]; then
-            echo "Unable to determine CUDA version from nvidia-smi output."
-            exit 1
-          fi
-          if [ "$(printf '%s\n' "${min_cuda}" "${cuda_version}" | sort -V | head -n1)" != "${min_cuda}" ]; then
-            echo "CUDA ${cuda_version} detected; requires ${min_cuda} or newer."
-            exit 1
-          fi
-
       - name: Prepare wheelhouse directory
         run: |
           rm -rf wheelhouse
