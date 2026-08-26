@@ -67,6 +67,50 @@ discover_versions() {
   printf '%s\n' "${versions[@]}"
 }
 
+# torch is unpinned, so a matrix entry can resolve to a torch that this image's
+# nvcc cannot compile against: torch >= 2.12 ships an ATen/core/List_inl.h that
+# some nvcc/host-compiler pairs refuse to parse. Compiling one translation unit
+# that instantiates it settles that in seconds instead of after a full build.
+# Runs inside build_for_python, so it uses that venv's python and errexit: a
+# failed probe aborts this Python version before any real compilation starts.
+canary_torch() {
+  local src="${VENV_ROOT}/canary.cu"
+
+  # A bare #include does not instantiate the offending template; operator[] does.
+  cat > "${src}" <<'CU'
+#include <torch/extension.h>
+
+void sageattention_canary() {
+  c10::List<int64_t> values({1, 2, 3});
+  (void)values[0];
+}
+CU
+
+  # include_paths("cuda") suits both the modern device_type= signature and the
+  # pre-2.8 cuda= boolean one. It omits the CPython headers that setuptools
+  # supplies during the real build, and torch/extension.h includes Python.h, so
+  # add them here or the probe fails on every torch, working ones included.
+  local flags=()
+  mapfile -t flags < <(python - <<'PY'
+import os
+import sysconfig
+
+import torch
+from torch.utils.cpp_extension import include_paths
+
+print("-D_GLIBCXX_USE_CXX11_ABI=%d" % torch._C._GLIBCXX_USE_CXX11_ABI)
+
+dirs = list(include_paths("cuda"))
+dirs += [sysconfig.get_paths()["include"], sysconfig.get_config_var("INCLUDEPY")]
+dirs = [d for d in dict.fromkeys(dirs) if d and os.path.isdir(d)]
+print(*("-I" + d for d in dirs), sep="\n")
+PY
+  )
+
+  timeout 300 nvcc -std=c++17 --expt-relaxed-constexpr "${flags[@]}" \
+    -c "${src}" -o /dev/null
+}
+
 build_for_python() {
   local py_minor="$1"
   (
@@ -84,6 +128,7 @@ build_for_python() {
     rm -rf "${venv_dir}"
     uv venv "${venv_dir}" --seed --python "${py_minor}"
 
+    # shellcheck disable=SC1090
     source "${venv_dir}/bin/activate"
 
     uv pip install \
@@ -94,6 +139,9 @@ build_for_python() {
       wheel \
       setuptools \
       packaging
+
+    echo "=== Canary: probing torch $(python -c 'import torch; print(torch.__version__)') ==="
+    canary_torch
 
     if [ -n "${SAGE_VERSION:-}" ]; then
       python /home/ubuntu/patch_version.py
@@ -134,7 +182,16 @@ mapfile -t requested_versions < <(discover_versions)
 echo "Python versions selected: ${requested_versions[*]}"
 
 for py_minor in "${requested_versions[@]}"; do
-  if build_for_python "${py_minor}"; then
+  # Not "if build_for_python ...": bash ignores errexit for the whole dynamic
+  # extent of a condition, subshell included, so a mid-build failure there would
+  # be masked by whatever ran last. Toggling it off around the call keeps the
+  # "set -e" inside build_for_python armed.
+  set +e
+  build_for_python "${py_minor}"
+  status=$?
+  set -e
+
+  if [ "${status}" -eq 0 ]; then
     successful_versions+=("${py_minor}")
   else
     failed_versions+=("${py_minor}")
