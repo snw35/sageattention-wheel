@@ -87,14 +87,23 @@ void sageattention_canary() {
 CU
 
   # include_paths("cuda") suits both the modern device_type= signature and the
-  # pre-2.8 cuda= boolean one.
+  # pre-2.8 cuda= boolean one. It omits the CPython headers that setuptools
+  # supplies during the real build, and torch/extension.h includes Python.h, so
+  # add them here or the probe fails on every torch, working ones included.
   local flags=()
   mapfile -t flags < <(python - <<'PY'
+import os
+import sysconfig
+
 import torch
 from torch.utils.cpp_extension import include_paths
 
 print("-D_GLIBCXX_USE_CXX11_ABI=%d" % torch._C._GLIBCXX_USE_CXX11_ABI)
-print(*("-I" + path for path in include_paths("cuda")), sep="\n")
+
+dirs = list(include_paths("cuda"))
+dirs += [sysconfig.get_paths()["include"], sysconfig.get_config_var("INCLUDEPY")]
+dirs = [d for d in dict.fromkeys(dirs) if d and os.path.isdir(d)]
+print(*("-I" + d for d in dirs), sep="\n")
 PY
   )
 
