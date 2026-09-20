@@ -1,4 +1,4 @@
-FROM nvidia/cuda:13.3.1-cudnn-devel-ubuntu26.04
+FROM nvidia/cuda:13.4.1-cudnn-devel-ubuntu26.04
 
 # The nvcc compiler and full CUDA libs are needed to compile sageattention
 
@@ -27,10 +27,10 @@ ENV UV_PYTHON_VERSIONS=
 ENV TORCH_INDEX_URL=https://download.pytorch.org/whl/cu130
 
 # Version variables controlled by https://github.com/snw35/dfupdate
-ENV UV_VERSION=0.12.13
+ENV UV_VERSION=0.12.17
 ENV UV_URL=https://github.com/astral-sh/uv/releases/download/${UV_VERSION}
 ENV UV_FILENAME=uv-x86_64-unknown-linux-gnu.tar.gz
-ENV UV_SHA256=745765a3b6e360ad76743599ae5c42e9278c7edf8bbff9fc76d05bf2623a04dd
+ENV UV_SHA256=fa82fd8dde8e8eefdecada6aa0889666556cfceb690d06e0c3bca49eb3070a63
 
 # Install UV
 RUN curl -L -O ${UV_URL}/${UV_FILENAME} \
