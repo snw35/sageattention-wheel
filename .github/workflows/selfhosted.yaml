@@ -62,6 +62,8 @@ jobs:
           mkdir -p "${filtered}"
           skipped=0
           copied=0
+          echo "wheelhouse holds $(du -sh wheelhouse | cut -f1); disk before filtering:"
+          df -h .
           while IFS= read -r -d '' file; do
             size="$(stat -c %s "${file}")"
             if [ "${size}" -ge "${max_bytes}" ]; then
@@ -69,9 +71,22 @@ jobs:
               skipped=$((skipped + 1))
               continue
             fi
-            cp -v "${file}" "${filtered}/"
+            # Hardlink rather than copy. ${filtered} is on the same filesystem,
+            # and the wheelhouse runs to tens of GiB, so copying it doubles the
+            # job's peak disk use for no gain. Fall back to a copy if the link
+            # cannot be made (different filesystem, or a filesystem without
+            # hardlinks). upload-artifact and the release upload both read
+            # through a hardlink normally.
+            if ln -f "${file}" "${filtered}/" 2>/dev/null; then
+              echo "Linking ${file} (${size} bytes)."
+            else
+              echo "Copying ${file} (${size} bytes); hardlink unavailable."
+              cp -f "${file}" "${filtered}/"
+            fi
             copied=$((copied + 1))
           done < <(find wheelhouse -maxdepth 1 -type f -print0)
+          echo "Kept ${copied}, skipped ${skipped}; disk after filtering:"
+          df -h .
           if [ "${copied}" -eq 0 ]; then
             echo "Warning: no wheelhouse files under 2 GiB to upload."
             if [ "${skipped}" -gt 0 ]; then
