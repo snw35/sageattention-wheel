@@ -4,17 +4,11 @@
     "BASE": {
       "version": "12.9.2-cudnn-devel-ubuntu24.04"
     },
-    "SAGE": {
-      "version": "2.2.0",
-      "gitref": "refs/tags/v2.2.0",
-      "revision": "eb615cf6cf4d221338033340ee2de1c37fbdba4a",
-      "url": "https://github.com/thu-ml/SageAttention/releases/tag/v2.2.0"
-    },
     "UV": {
-      "version": "0.13.0",
-      "gitref": "refs/tags/0.13.0",
-      "revision": "4ecd0eff2a81e3ffdcd7cfee10d08936e4747c17",
-      "url": "https://github.com/astral-sh/uv/releases/tag/0.13.0"
+      "version": "0.13.1",
+      "gitref": "refs/tags/0.13.1",
+      "revision": "62faed3351cfee2121b3c28b937b1f4b93233a93",
+      "url": "https://github.com/astral-sh/uv/releases/tag/0.13.1"
     }
   }
 }
